@@ -1,0 +1,42 @@
+{
+  "name": "pelion-quick-start-web-app",
+  "version": "0.3.0",
+  "description": "A sample Node.js app using Express 4 and React",
+  "engines": {
+    "node": "12.x"
+  },
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "heroku-postbuild": "cd client && npm install && npm run build",
+    "postinstall": "cd client && npm install && npm run build"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.1",
+    "@types/node-fetch": "^2.5.4",
+    "@types/pg": "^7.11.2",
+    "@types/superagent": "^4.1.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.15.2",
+    "moment": "^2.24.0",
+    "node-fetch": "^2.6.0",
+    "pg": "^7.12.1",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.7.2"
+  },
+  "devDependencies": {
+    "prettier": "^1.19.1",
+    "request": "^2.81.0",
+    "tape": "^4.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ARMmbed/pelion-quick-start-web-app"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "Apache-2.0"
+}

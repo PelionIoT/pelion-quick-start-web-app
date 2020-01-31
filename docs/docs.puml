@@ -1,0 +1,85 @@
+@startuml app_arch
+actor User as u
+folder "Heroku" as h {
+    component "Web App" as server
+    database "Postgres DB" as db
+}
+cloud "Pelion\n Device\n Management" as pdm
+component "Disco 475" as disco
+u -right- server
+server -- db
+server -right- pdm
+pdm -right- disco
+@enduml
+
+@startuml app_setup
+title App startup
+entity "Web App" as app
+database "PostGres" as db
+collections "Pelion DM Api" as api
+entity "Disco 475" as device
+
+-> app: Start app
+activate app
+app -> app: Start web server
+app -> db: Init Tables
+activate db
+db -> app: OK
+deactivate db
+app -> api: Create webhook
+activate api
+api -> app: Test webhook: /callback
+deactivate api
+app -> api: Subscribe to devices and resources
+activate api
+api -> app: OK
+deactivate app
+api -> device: Subscribe /3303/*
+device -> api: OK
+api -> app: Webhook: Subscribe OK
+deactivate api
+@enduml
+
+@startuml resource_notify
+title Event notification
+entity "Web App" as app
+database "PostGres" as db
+collections "Pelion DM Api" as api
+entity "Disco 475" as device
+
+device <-: Resource value changes
+activate device
+device -> api: Notify
+deactivate device
+activate api
+api -> app: Notify on webhook
+activate app
+app -> api: 204 OK
+deactivate api
+app -> db: Store in DB
+activate db
+db -> app: OK
+deactivate db
+deactivate app
+@enduml
+
+@startuml view_data
+title Visualise Data
+entity "App" as app
+database "PostGres" as db
+
+-> app: Load web app
+activate app
+app -> db: get Data
+activate db
+db  -> app: Send
+deactivate db
+<- app: Render graphs
+app -> app: Wait 10s
+app -> db: get Data
+activate db
+db  -> app: Send
+deactivate db
+<- app: Re-render graphs
+deactivate app
+@enduml

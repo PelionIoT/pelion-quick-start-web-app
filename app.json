@@ -1,0 +1,7 @@
+{
+  "name": "Pelion Device management quick start web app",
+  "description": "A barebones Node.js app using Express 4 and React",
+  "repository": "https://github.com/ARMmbed/pelion-quick-start-web-app",
+  "keywords": ["node", "express", "heroku", "react"],
+  "image": "heroku/nodejs"
+}
