@@ -6,7 +6,7 @@ export const checkStatus = async (res: Response) => {
     return res;
   } else {
     console.log(res.status, res.statusText, await res.text());
-    return res;
+    throw new Error(res.statusText);
   }
 };
 

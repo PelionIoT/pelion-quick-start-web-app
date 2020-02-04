@@ -4,7 +4,7 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import superagent from "superagent";
 import { Devices, Names, Paths, ResourceValue } from ".";
 
-const PAUSE_FOR_POLL = 1000;
+const PAUSE_FOR_POLL = 5000;
 
 const deviceNames: Names = { "016e94466d7a000000000001001d1395": "Bert's device" };
 
