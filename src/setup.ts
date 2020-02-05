@@ -12,7 +12,7 @@ import {
 } from "./types";
 import { checkStatus, matchWithWildcard } from "./utils";
 
-const hostName = process.env.HOSTNAME || "https://localhost";
+const hostName = process.env.APP_HOST || "https://localhost";
 const webhookURI = new URL("callback", hostName).toString();
 const resourcePaths = (process.env.RESOURCE || "/3303/*").split(",");
 const deviceId = (process.env.DEVICE_ID || "*").split(",");
@@ -26,7 +26,7 @@ const endpointsUrl = new URL("/v2/endpoints", apiUrl);
 const longPollUrl = new URL("/v2/notification/pull", apiUrl);
 const webhookUrl = new URL("/v2/notification/callback", apiUrl);
 
-console.log(`HOSTNAME=${hostName}`);
+console.log(`APP_HOST=${hostName}`);
 console.log(`RESOURCE=${resourcePaths.join(",")}`);
 console.log(`DEVICE_ID=${deviceId.join(",")}`);
 console.log(`LONG_POLLING_ENABLED=${process.env.LONG_POLLING_ENABLED}\n`);

@@ -10,13 +10,14 @@ import { Pool } from "pg";
 import { handleNotification, setup } from "./src/setup";
 import { AsyncRequest, NotificationData, Results } from "./src/types";
 
+console.log(`DATABASE_URL=${process.env.DATABASE_URL}`);
+
 export const LONG_POLLING_ENABLED: boolean = process.env.LONG_POLLING_ENABLED === "true";
 
 const PORT = process.env.PORT || 5000;
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: true,
 });
 
 /**

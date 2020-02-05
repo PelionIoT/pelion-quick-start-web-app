@@ -1,31 +1,33 @@
 FROM node:current-alpine
 
-WORKDIR /usr/src/app
+RUN mkdir /app && chown -R node:node /app
+
+WORKDIR /app
 
 COPY package*.json ./
 
 RUN npm ci --only=production
 
-WORKDIR /usr/src/app/client
+WORKDIR /app/client
 
 COPY client/package*.json ./
 
 RUN npm ci
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 ADD . .
 
-WORKDIR /usr/src/app/client
+WORKDIR /app/client
 
 RUN npm run build
 
 RUN rm -rf node_modules
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 RUN npm cache clean --force
 
 EXPOSE 5000
 
-CMD [ "npx", "ts-node", "index.ts" ]
+CMD [ "./node_modules/.bin/ts-node", "index.ts" ]
