@@ -12,7 +12,7 @@ import {
 } from "./types";
 import { checkStatus, matchWithWildcard } from "./utils";
 
-const hostName = process.env.HOSTNAME || "https://localhost";
+const hostName = process.env.APP_HOST || "https://localhost";
 const webhookURI = new URL("callback", hostName).toString();
 const resourcePaths = (process.env.RESOURCE || "/3303/*").split(",");
 const deviceId = (process.env.DEVICE_ID || "*").split(",");
@@ -26,7 +26,7 @@ const endpointsUrl = new URL("/v2/endpoints", apiUrl);
 const longPollUrl = new URL("/v2/notification/pull", apiUrl);
 const webhookUrl = new URL("/v2/notification/callback", apiUrl);
 
-console.log(`HOSTNAME=${hostName}`);
+console.log(`APP_HOST=${hostName}`);
 console.log(`RESOURCE=${resourcePaths.join(",")}`);
 console.log(`DEVICE_ID=${deviceId.join(",")}`);
 console.log(`LONG_POLLING_ENABLED=${process.env.LONG_POLLING_ENABLED}\n`);
@@ -148,24 +148,28 @@ const longPoll = async (notification: (n: NotificationData) => void) => {
    * Get notifications through long-polling channel
    * GET /v2/notification/pull
    */
+  let delay = 500;
   const result = await fetch(longPollUrl, { headers })
     .then(checkStatus)
     .then(r => r.json())
     .catch(e => {
       // If errors start to occur, do another long poll but wait a few seconds to prevent rapid ramp-up if this is due to 409 conflicts
-      setTimeout(() => longPoll(notification), 5000);
+      delay *= 10;
     });
   /**
    * Do another long-poll.
    * Long-polling requires the client code to actively request notifications.
    * Empty responses occur if no event happens within 30 seconds.  Client code will need to handle 204 and request again.
    */
-  setTimeout(() => longPoll(notification), 0);
+  setTimeout(() => longPoll(notification), delay);
   // Handle responses
   handleNotification(result, notification);
 };
 
 export const handleNotification = (result: NotificationResponse, notification: (n: NotificationData) => void) => {
+  if (!result) {
+    return;
+  }
   const { notifications } = result;
   const asyncResponses = result["async-responses"];
   /**

@@ -5,7 +5,7 @@
 You will need two pieces of information at a minimum to get this running correctly.
 
 - `APIKEY` - API Key from Pelion Device Management - https://portal.mbedcloud.com/
-- `HOSTNAME` - URL of the application to be deployed - `https://<APP>.herokuapp.com/`
+- `APP_HOST` - URL of the application to be deployed - `https://<APP>.herokuapp.com/`
 
 ## Deploy from Github
 
@@ -32,7 +32,7 @@ Heroku apps provide configuration options through environment variables. These a
 | Key                  | Value                                  | Optional | Default                             |
 | -------------------- | -------------------------------------- | -------- | ----------------------------------- |
 | API_KEY              | `APIKEY`                               |          |                                     |
-| HOSTNAME             | https://`APP`.herokuapp.com/           |          |                                     |
+| APP_HOST             | https://`APP`.herokuapp.com/           |          |                                     |
 | API_HOST             | `APIHOST`                              | ✓        | https://api.us-east-1.mbedcloud.com |
 | LONG_POLLING_ENABLED | `true` or `false`                      | ✓        | `false`                             |
 | DEVICE_ID            | Comma separated list of device IDs     | ✓        | \*                                  |

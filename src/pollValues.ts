@@ -77,7 +77,7 @@ export const getValues = async (notify: (data: NotificationData) => void) => {
          */
         storeAsync({ asyncId, deviceId: device.id, path: resource.uri });
 
-        await resolveIn(250);
+        await resolveIn(500);
       }
     });
   console.log(`Resource values requested, going to sleep for ${POLLING_INTERVAL / (1000 * 60)} minute(s)`);
