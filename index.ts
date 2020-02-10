@@ -105,6 +105,14 @@ const expressServer = express()
       res.send("Error" + err);
     }
   })
+  .get("/reset-values", async (_, res) => {
+    const query = "truncate resource_values;";
+    try {
+      res.send(await getQuery(query));
+    } catch (err) {
+      res.send("Error" + err);
+    }
+  })
   // Serves the react web app in /client and built artifacts put into /client/build/
   .get("*", (_, res) => {
     res.sendFile(path.join(__dirname + "/client/build/index.html"));
