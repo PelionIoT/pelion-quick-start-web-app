@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { storeAsync } from "../";
+import { getQuery, storeAsync } from "../";
 import { DeviceResource, NotificationData, RegisteredDevicesResponse } from "./types";
 import { checkStatus, generateId, matchWithWildcard, resolveIn } from "./utils";
 
@@ -34,11 +34,29 @@ export const getValues = async (notify: (data: NotificationData) => void) => {
     // Filter for matching DEVICE
     .filter(device => deviceId.reduce<boolean>((prev, curr) => prev || matchWithWildcard(curr, device.id), false))
     .forEach(async device => {
+      console.log(`Update db for device: ${device.id} ${device.name}`);
+      await getQuery(
+        `
+        INSERT INTO devices(device_id, name, resources) 
+        VALUES ($1, $2, $3)
+        ON CONFLICT (device_id)
+        DO UPDATE SET name = EXCLUDED.name;`,
+        [device.id, device.name, ""]
+      );
       console.log(`Looking for resources on ${device.id}`);
       // Collect resources on each device GET /v2/endpoints/{deviceID}
       const resources = (await fetch(`${endpointsUrl}/${device.id}`, { headers })
         .then(checkStatus)
         .then(r => r.json())) as DeviceResource[];
+
+      await getQuery(
+        `
+          UPDATE devices
+          SET resources = $2
+          WHERE device_id = $1;`,
+        [device.id, JSON.stringify(resources)]
+      );
+
       // Filter for matching RESOURCE
       const matchedRes = resources.filter(resource =>
         resourcePaths.reduce<boolean>((prev, curr) => prev || matchWithWildcard(curr, resource.uri), false)

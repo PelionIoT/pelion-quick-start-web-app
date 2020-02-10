@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { Pool } from "pg";
-import { removeAsync } from "../";
+import { removeAsync, getQuery } from "../";
 import { getValues } from "./pollValues";
 import {
   AsyncRequest,
@@ -37,11 +37,27 @@ console.log(`LONG_POLLING_ENABLED=${process.env.LONG_POLLING_ENABLED}\n`);
 export const setup = async (pool: Pool, notification: (n: NotificationData) => void, longPolling: boolean = false) => {
   console.log("Updating table schema");
   try {
-    const client = await pool.connect();
-    const query =
-      "create table if not exists resource_values ( id serial, device_id varchar(50), path varchar(50), time timestamp, value text );";
-    await client.query(query);
-    client.release();
+    await getQuery(
+      `
+    create table if not exists resource_values ( 
+      id serial, 
+      device_id varchar(50), 
+      path varchar(50), 
+      time timestamp, 
+      value text 
+      );
+    `
+    );
+    await getQuery(
+      `
+      create table if not exists devices ( 
+        id serial, 
+        device_id varchar(50) unique, 
+        name varchar(50), 
+        resources text 
+        );
+      `
+    );
   } catch (err) {
     console.error(err);
   }

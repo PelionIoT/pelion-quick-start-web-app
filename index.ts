@@ -6,9 +6,17 @@ require("dotenv").config(); // Use a .env file to configure environment variable
 import express from "express";
 import moment from "moment";
 import path from "path";
+import fetch from "node-fetch";
 import { Pool } from "pg";
 import { handleNotification, setup } from "./src/setup";
 import { AsyncRequest, NotificationData, Results } from "./src/types";
+import { generateId, checkStatus } from "./src/utils";
+
+const apiUrl = process.env.API_HOST || "https://api.us-east-1.mbedcloud.com/";
+const apiKey = process.env.API_KEY;
+const headers = { Authorization: `bearer ${apiKey}`, "Content-Type": "application/json" };
+
+const deviceRequestUrl = new URL("/v2/device-requests", apiUrl);
 
 console.log(`DATABASE_URL=${process.env.DATABASE_URL}`);
 
@@ -24,10 +32,10 @@ const pool = new Pool({
  * Request simple database actions
  * @param query PostGres SQL statement
  */
-const getQuery = async (query = "select * from resource_values;") => {
+export const getQuery = async (query = "select * from resource_values;", values: string[] = []) => {
   const results: Results = { results: [] };
   const client = await pool.connect();
-  const result = await client.query(query);
+  const result = await client.query(query, values);
   results.results = result ? result.rows : [];
   client.release();
   return results;
@@ -83,6 +91,31 @@ const notification = async ({ deviceId, path, payload }: NotificationData) => {
   }
 };
 
+const sendRequest = async (deviceId: string, path: string, payload: string, post = false) => {
+  const asyncId = generateId();
+  const body = JSON.stringify({
+    method: post ? "POST" : "PUT",
+    uri: path,
+    "payload-b64": new Buffer(payload).toString("base64"),
+  });
+  // POST /v2/device-requests/{deviceID}?async-id={asyncId}
+  const url = `${deviceRequestUrl}/${deviceId}?async-id=${asyncId}`;
+  console.log(url, body);
+  await fetch(url, {
+    method: "POST",
+    headers,
+    body,
+  })
+    .then(checkStatus)
+    .then(res => {
+      if (!res.ok) console.log(`PUT Request sent`);
+    });
+  /**
+   * Store the AsyncID, DeviceID and resourcePath somewhere to handle notifications later
+   */
+  storeAsync({ asyncId, deviceId, path });
+};
+
 /**
  * Set up the Express server.
  * Always register the `/values` and `*` endpoints.
@@ -106,12 +139,28 @@ const expressServer = express()
     }
   })
   .get("/reset-values", async (_, res) => {
-    const query = "truncate resource_values;";
     try {
-      res.send(await getQuery(query));
+      res.send(await getQuery("truncate resource_values;"));
     } catch (err) {
       res.send("Error" + err);
     }
+  })
+  .get("/devices", async (_, res) => {
+    try {
+      res.send(await getQuery("select * from devices;"));
+    } catch (err) {
+      res.send("Error" + err);
+    }
+  })
+  .put("/devices/:device_id/:obj/:inst/:resource", async (req, res) => {
+    const { device_id, obj, inst, resource } = req.params;
+    sendRequest(device_id, `/${obj}/${inst}/${resource}`, req.body.payload);
+    res.sendStatus(204);
+  })
+  .post("/devices/:device_id/:obj/:inst/:resource", async (req, res) => {
+    const { device_id, obj, inst, resource } = req.params;
+    sendRequest(device_id, `/${obj}/${inst}/${resource}`, req.body.payload, true);
+    res.sendStatus(204);
   })
   // Serves the react web app in /client and built artifacts put into /client/build/
   .get("*", (_, res) => {
