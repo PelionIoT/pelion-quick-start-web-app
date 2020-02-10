@@ -4,6 +4,8 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import superagent from "superagent";
 import { Devices, Names, Paths, ResourceValue } from ".";
 
+const apiUrl = window.location.href;
+
 const PAUSE_FOR_POLL = 5000;
 
 const deviceNames: Names = { "016e94466d7a000000000001001d1395": "Bert's device" };
@@ -20,7 +22,7 @@ const App: React.FC = () => {
 
   const getValues = () => {
     superagent
-      .get("/values")
+      .get(new URL("/values", apiUrl).toString())
       .then(parseValues)
       .catch(() => window.setTimeout(getValues, PAUSE_FOR_POLL));
   };
@@ -112,9 +114,18 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
+        <button
+          onClick={() => {
+            superagent.get(new URL("/reset-values", apiUrl).toString()).then(() => getValues());
+          }}
+        >
+          Reset db values
+        </button>
+      </header>
+      <article className="App-article">
         {showDevices(devices)}
         {values.length === 0 && <h1 className="noData">No data available</h1>}
-      </header>
+      </article>
     </div>
   );
 };
