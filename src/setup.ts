@@ -54,7 +54,8 @@ export const setup = async (pool: Pool, notification: (n: NotificationData) => v
         id serial, 
         device_id varchar(50) unique, 
         name varchar(50), 
-        resources text 
+        state varchar(50),
+        resources text
         );
       `
     );

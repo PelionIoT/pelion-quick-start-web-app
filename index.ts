@@ -126,6 +126,7 @@ const expressServer = express()
   .use(express.json())
   .use((_, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
   })
@@ -147,18 +148,20 @@ const expressServer = express()
   })
   .get("/devices", async (_, res) => {
     try {
-      res.send(await getQuery("select * from devices;"));
+      res.send(await getQuery("select * from devices where state='registered';"));
     } catch (err) {
       res.send("Error" + err);
     }
   })
   .put("/devices/:device_id/:obj/:inst/:resource", async (req, res) => {
     const { device_id, obj, inst, resource } = req.params;
+    console.log(`PUT /devices/${device_id}/${obj}/${inst}/${resource} - ${req.body.payload}`);
     sendRequest(device_id, `/${obj}/${inst}/${resource}`, req.body.payload);
     res.sendStatus(204);
   })
   .post("/devices/:device_id/:obj/:inst/:resource", async (req, res) => {
     const { device_id, obj, inst, resource } = req.params;
+    console.log(`POST /devices/${device_id}/${obj}/${inst}/${resource} - ${req.body.payload}`);
     sendRequest(device_id, `/${obj}/${inst}/${resource}`, req.body.payload, true);
     res.sendStatus(204);
   })

@@ -1,6 +1,7 @@
 export interface RegisteredDevice {
   id: string;
   name: string;
+  state: string;
 }
 
 export interface RegisteredDevicesResponse {

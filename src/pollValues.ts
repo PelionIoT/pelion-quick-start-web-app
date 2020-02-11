@@ -26,7 +26,7 @@ export const getValues = async (notify: (data: NotificationData) => void) => {
   console.log("Getting latest resource values");
   console.log("Getting registered devices");
   // GET /v3/devices?state__eq=registered
-  const registeredDevices = (await fetch(`${deviceDirectoryUrl}?state__eq=registered`, { headers })
+  const registeredDevices = (await fetch(deviceDirectoryUrl, { headers })
     .then(checkStatus)
     .then(res => res.json())) as RegisteredDevicesResponse;
 
@@ -37,12 +37,15 @@ export const getValues = async (notify: (data: NotificationData) => void) => {
       console.log(`Update db for device: ${device.id} ${device.name}`);
       await getQuery(
         `
-        INSERT INTO devices(device_id, name, resources) 
-        VALUES ($1, $2, $3)
+        INSERT INTO devices(device_id, name, state, resources) 
+        VALUES ($1, $2, $3, $4)
         ON CONFLICT (device_id)
-        DO UPDATE SET name = EXCLUDED.name;`,
-        [device.id, device.name, ""]
+        DO UPDATE SET name = EXCLUDED.name, state = EXCLUDED.state;`,
+        [device.id, device.name, device.state, ""]
       );
+      if (device.state !== "registered") {
+        return;
+      }
       console.log(`Looking for resources on ${device.id}`);
       // Collect resources on each device GET /v2/endpoints/{deviceID}
       const resources = (await fetch(`${endpointsUrl}/${device.id}`, { headers })

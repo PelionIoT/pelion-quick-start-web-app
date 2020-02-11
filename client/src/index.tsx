@@ -24,4 +24,17 @@ export interface Names {
   [index: string]: string;
 }
 
+export interface DeviceResource {
+  uri: string;
+  obs: boolean;
+  rt?: string;
+  type?: string;
+}
+export interface DeviceInfo {
+  id: string;
+  device_id: string;
+  name: string;
+  resources: DeviceResource[];
+}
+
 ReactDOM.render(<App />, document.getElementById("root"));
