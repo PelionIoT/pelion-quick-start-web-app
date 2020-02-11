@@ -4,12 +4,19 @@ const apiUrl = process.env.API_HOST || "https://api.us-east-1.mbedcloud.com/";
 const apiKey = process.env.API_KEY;
 export const headers = { Authorization: `bearer ${apiKey}`, "Content-Type": "application/json" };
 
-export const subscriptionsUrl = new URL("/v2/subscriptions", apiUrl);
 export const deviceDirectoryUrl = new URL("/v3/devices", apiUrl);
+export const deviceRequestUrl = new URL("/v2/device-requests", apiUrl);
 export const endpointsUrl = new URL("/v2/endpoints", apiUrl);
 export const longPollUrl = new URL("/v2/notification/pull", apiUrl);
+export const subscriptionsUrl = new URL("/v2/subscriptions", apiUrl);
 export const webhookUrl = new URL("/v2/notification/callback", apiUrl);
-export const deviceRequestUrl = new URL("/v2/device-requests", apiUrl);
+
+export const resourcePaths = (process.env.RESOURCE || "*").split(",");
+export const deviceId = (process.env.DEVICE_ID || "*").split(",");
+export const hostName = process.env.APP_HOST || "https://localhost";
+export const webhookURI = new URL("callback", hostName).toString();
+
+export const LONG_POLLING_ENABLED: boolean = process.env.LONG_POLLING_ENABLED === "true";
 
 export const checkStatus = async (res: Response) => {
   if (res.ok) {

@@ -2,19 +2,19 @@ import fetch from "node-fetch";
 import { generateId, storeAsync } from "./asyncResponses";
 import { getQuery } from "./dbActions";
 import { DeviceResource, RegisteredDevicesResponse } from "./types";
-import { checkStatus, matchWithWildcard, resolveIn } from "./utils";
+import {
+  checkStatus,
+  deviceDirectoryUrl,
+  deviceRequestUrl,
+  endpointsUrl,
+  headers,
+  matchWithWildcard,
+  resolveIn,
+  deviceId,
+  resourcePaths,
+} from "./utils";
 
-const resourcePaths = (process.env.RESOURCE || "/3303/*").split(",");
-const deviceId = (process.env.DEVICE_ID || "*").split(",");
 const POLLING_INTERVAL = 1000 * 60 * 5;
-
-const apiUrl = process.env.API_HOST || "https://api.us-east-1.mbedcloud.com/";
-const apiKey = process.env.API_KEY;
-const headers = { Authorization: `bearer ${apiKey}`, "Content-Type": "application/json" };
-
-const deviceDirectoryUrl = new URL("/v3/devices", apiUrl);
-const endpointsUrl = new URL("/v2/endpoints", apiUrl);
-const deviceRequestUrl = new URL("/v2/device-requests", apiUrl);
 
 /**
  * Poll for values of resources we are interested in.

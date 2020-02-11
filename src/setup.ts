@@ -6,17 +6,17 @@ import { DeviceResource, RegisteredDevicesResponse, SubscriptionBody } from "./t
 import {
   checkStatus,
   deviceDirectoryUrl,
+  deviceId,
   endpointsUrl,
   headers,
+  hostName,
+  LONG_POLLING_ENABLED,
   matchWithWildcard,
+  resourcePaths,
   subscriptionsUrl,
+  webhookURI,
   webhookUrl,
 } from "./utils";
-
-const hostName = process.env.APP_HOST || "https://localhost";
-const webhookURI = new URL("callback", hostName).toString();
-const resourcePaths = (process.env.RESOURCE || "/3303/*").split(",");
-const deviceId = (process.env.DEVICE_ID || "*").split(",");
 
 console.log(`APP_HOST=${hostName}`);
 console.log(`RESOURCE=${resourcePaths.join(",")}`);
@@ -26,7 +26,7 @@ console.log(`LONG_POLLING_ENABLED=${process.env.LONG_POLLING_ENABLED}\n`);
 /**
  * Setup the database, subscriptions, webhooks and / or long polling
  */
-export const setup = async (longPolling: boolean = false) => {
+export const setup = async () => {
   console.log("Updating table schema");
   try {
     await getQuery(
@@ -117,7 +117,7 @@ export const setup = async (longPolling: boolean = false) => {
     console.log("Deleted old webhook");
 
     // Notifications can come through long-polling (PULL) or via webhooks (PUSH)
-    if (longPolling) {
+    if (LONG_POLLING_ENABLED) {
       // Start long-polling via timeouts and repeated calls to /v2/notification/pull
       startLongPoll();
       console.log("Using long-polling");

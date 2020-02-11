@@ -9,8 +9,7 @@ import { sendRequest } from "./src/deviceRequest";
 import { handleNotification } from "./src/longPoll";
 import { setup } from "./src/setup";
 import { getQuery } from "./src/dbActions";
-
-export const LONG_POLLING_ENABLED: boolean = process.env.LONG_POLLING_ENABLED === "true";
+import { LONG_POLLING_ENABLED } from "./src/utils";
 
 const PORT = process.env.PORT || 5000;
 
@@ -84,5 +83,5 @@ if (!LONG_POLLING_ENABLED) {
 expressServer
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
   .once("listening", () => {
-    setup(LONG_POLLING_ENABLED);
+    setup();
   });

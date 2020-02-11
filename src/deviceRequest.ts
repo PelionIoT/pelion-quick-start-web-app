@@ -7,7 +7,7 @@ export const sendRequest = async (deviceId: string, path: string, payload: strin
   const body = JSON.stringify({
     method: post ? "POST" : "PUT",
     uri: path,
-    "payload-b64": new Buffer(payload).toString("base64"),
+    "payload-b64": Buffer.from(payload, "utf-8").toString("base64"),
   });
   // POST /v2/device-requests/{deviceID}?async-id={asyncId}
   const url = `${deviceRequestUrl}/${deviceId}?async-id=${asyncId}`;
