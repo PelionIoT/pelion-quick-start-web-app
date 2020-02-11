@@ -2,13 +2,11 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import superagent from "superagent";
-import { Devices, Names, Paths, ResourceValue } from ".";
+import { Devices, Names, Paths, ResourceValue, DeviceInfo, DeviceResource } from ".";
 
 const apiUrl = window.location.href;
 
-const PAUSE_FOR_POLL = 5000;
-
-const deviceNames: Names = { "016e94466d7a000000000001001d1395": "Bert's device" };
+const PAUSE_FOR_POLL = 1000 * 5; // 5 seconds
 
 const resourceNames: Names = {
   "/3303/.*/5700": "Temperature sensor",
@@ -18,13 +16,16 @@ const resourceNames: Names = {
 
 const App: React.FC = () => {
   const [values, setValues] = useState<ResourceValue[]>([]);
+  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo[]>([]);
+  const [deviceNames, setDeviceNames] = useState<Names>({});
   const devices: Devices = {};
 
   const getValues = () => {
     superagent
       .get(new URL("/values", apiUrl).toString())
       .then(parseValues)
-      .catch(() => window.setTimeout(getValues, PAUSE_FOR_POLL));
+      .finally(() => window.setTimeout(getValues, PAUSE_FOR_POLL));
+    superagent.get(new URL("/devices", apiUrl).toString()).then(parseDeviceInfo);
   };
 
   const parseValues = (result: superagent.Response) => {
@@ -37,9 +38,27 @@ const App: React.FC = () => {
       }));
       setValues(val);
     }
-    window.setTimeout(getValues, PAUSE_FOR_POLL);
   };
 
+  const parseDeviceInfo = (result: superagent.Response) => {
+    if (result.body) {
+      setDeviceInfo(
+        result.body.results
+          .map((a: any) => ({
+            ...a,
+            resources: JSON.parse(a.resources).sort((a: DeviceResource, b: DeviceResource) =>
+              a.uri.localeCompare(b.uri)
+            ),
+          }))
+          .sort((a: DeviceInfo, b: DeviceInfo) => a.name.localeCompare(b.name))
+      );
+      setDeviceNames(
+        result.body.results
+          .map((a: any) => ({ [a.device_id]: a.name }))
+          .reduce((acc: Names, cur: { [index: string]: string }) => ({ ...acc, ...cur }), {})
+      );
+    }
+  };
   useEffect(getValues, []);
 
   values.map(v => {
@@ -110,7 +129,12 @@ const App: React.FC = () => {
       </ResponsiveContainer>
     );
   };
-
+  const [selectedDevice, setSelectedDevice] = useState<string>();
+  const selectedDeviceInfo = deviceInfo.find(d => d.device_id === selectedDevice);
+  const [selectedResource, setSelectedResource] = useState<string>();
+  const [usePut, setUsePut] = useState(true);
+  const [sendingRequest, setSendingRequest] = useState(false);
+  const [payload, setPayload] = useState("");
   return (
     <div className="App">
       <header className="App-header">
@@ -120,6 +144,39 @@ const App: React.FC = () => {
           }}
         >
           Reset db values
+        </button>
+        <select value={selectedDevice} onChange={e => setSelectedDevice(e.target.value)}>
+          <option />
+          {deviceInfo.map(d => (
+            <option key={d.id} value={d.device_id}>
+              {d.name || d.device_id}
+            </option>
+          ))}
+        </select>
+        <select value={selectedResource} onChange={e => setSelectedResource(e.target.value)}>
+          <option />
+          {selectedDeviceInfo?.resources.map((r, key) => (
+            <option key={key} value={r.uri}>{`${r.uri} ${r.rt ?? ""}`}</option>
+          ))}
+        </select>
+        <input type="radio" id="put" name="putPost" checked={usePut} onChange={() => setUsePut(true)} />
+        <label htmlFor="put">PUT - Write</label>
+        <input type="radio" id="post" name="putPost" checked={!usePut} onChange={() => setUsePut(false)} />
+        <label htmlFor="post">POST - Execute</label>
+        <input type="text" value={payload} onChange={e => setPayload(e.target.value)} />
+        <button
+          disabled={!selectedResource && !selectedDevice && !sendingRequest}
+          onClick={async e => {
+            setSendingRequest(true);
+            const func = usePut ? superagent.put : superagent.post;
+            func(new URL(`/devices/${selectedDevice}${selectedResource}`, apiUrl).toString())
+              .type("json")
+              .send({ payload })
+              .then(() => {})
+              .finally(() => setSendingRequest(false));
+          }}
+        >
+          Send request
         </button>
       </header>
       <article className="App-article">

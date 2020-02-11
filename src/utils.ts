@@ -1,5 +1,23 @@
 import { Response } from "node-fetch";
 
+const apiUrl = process.env.API_HOST || "https://api.us-east-1.mbedcloud.com/";
+const apiKey = process.env.API_KEY;
+export const headers = { Authorization: `bearer ${apiKey}`, "Content-Type": "application/json" };
+
+export const deviceDirectoryUrl = new URL("/v3/devices", apiUrl);
+export const deviceRequestUrl = new URL("/v2/device-requests", apiUrl);
+export const endpointsUrl = new URL("/v2/endpoints", apiUrl);
+export const longPollUrl = new URL("/v2/notification/pull", apiUrl);
+export const subscriptionsUrl = new URL("/v2/subscriptions", apiUrl);
+export const webhookUrl = new URL("/v2/notification/callback", apiUrl);
+
+export const resourcePaths = (process.env.RESOURCE || "*").split(",");
+export const deviceId = (process.env.DEVICE_ID || "*").split(",");
+export const hostName = process.env.APP_HOST || "https://localhost";
+export const webhookURI = new URL("callback", hostName).toString();
+
+export const LONG_POLLING_ENABLED: boolean = process.env.LONG_POLLING_ENABLED === "true";
+
 export const checkStatus = async (res: Response) => {
   if (res.ok) {
     // res.status >= 200 && res.status < 300
@@ -33,9 +51,6 @@ export const matchWithWildcard = (input: string, matchWith: string): boolean => 
   // no wildcard so match strings explicitly
   return input === matchWith;
 };
-
-export const generateId = (): string =>
-  `${Date.now()}-${Math.floor(Math.random() * 10000)}-${Math.floor(Math.random() * 10000)}`;
 
 export const resolveIn = (n: number) =>
   new Promise(resolve => {

@@ -1,5 +1,7 @@
 export interface RegisteredDevice {
   id: string;
+  name: string;
+  state: string;
 }
 
 export interface RegisteredDevicesResponse {
@@ -25,12 +27,6 @@ export interface NotificationResponse {
 export interface SubscriptionBody {
   "endpoint-name": string;
   "resource-path": string[];
-}
-
-export interface AsyncRequest {
-  deviceId: string;
-  path: string;
-  asyncId: string;
 }
 
 export interface Results {
