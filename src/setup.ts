@@ -1,30 +1,22 @@
 import fetch from "node-fetch";
-import { Pool } from "pg";
-import { removeAsync, getQuery } from "../";
+import { getQuery } from "./dbActions";
+import { startLongPoll } from "./longPoll";
 import { getValues } from "./pollValues";
+import { DeviceResource, RegisteredDevicesResponse, SubscriptionBody } from "./types";
 import {
-  AsyncRequest,
-  DeviceResource,
-  NotificationData,
-  NotificationResponse,
-  RegisteredDevicesResponse,
-  SubscriptionBody,
-} from "./types";
-import { checkStatus, matchWithWildcard } from "./utils";
+  checkStatus,
+  deviceDirectoryUrl,
+  endpointsUrl,
+  headers,
+  matchWithWildcard,
+  subscriptionsUrl,
+  webhookUrl,
+} from "./utils";
 
 const hostName = process.env.APP_HOST || "https://localhost";
 const webhookURI = new URL("callback", hostName).toString();
 const resourcePaths = (process.env.RESOURCE || "/3303/*").split(",");
 const deviceId = (process.env.DEVICE_ID || "*").split(",");
-const apiUrl = process.env.API_HOST || "https://api.us-east-1.mbedcloud.com/";
-const apiKey = process.env.API_KEY;
-const headers = { Authorization: `bearer ${apiKey}` };
-
-const subscriptionsUrl = new URL("/v2/subscriptions", apiUrl);
-const deviceDirectoryUrl = new URL("/v3/devices", apiUrl);
-const endpointsUrl = new URL("/v2/endpoints", apiUrl);
-const longPollUrl = new URL("/v2/notification/pull", apiUrl);
-const webhookUrl = new URL("/v2/notification/callback", apiUrl);
 
 console.log(`APP_HOST=${hostName}`);
 console.log(`RESOURCE=${resourcePaths.join(",")}`);
@@ -34,7 +26,7 @@ console.log(`LONG_POLLING_ENABLED=${process.env.LONG_POLLING_ENABLED}\n`);
 /**
  * Setup the database, subscriptions, webhooks and / or long polling
  */
-export const setup = async (pool: Pool, notification: (n: NotificationData) => void, longPolling: boolean = false) => {
+export const setup = async (longPolling: boolean = false) => {
   console.log("Updating table schema");
   try {
     await getQuery(
@@ -127,7 +119,7 @@ export const setup = async (pool: Pool, notification: (n: NotificationData) => v
     // Notifications can come through long-polling (PULL) or via webhooks (PUSH)
     if (longPolling) {
       // Start long-polling via timeouts and repeated calls to /v2/notification/pull
-      startLongPoll(notification);
+      startLongPoll();
       console.log("Using long-polling");
     } else {
       // Create a webhook PUT /v2/notification/callback
@@ -152,68 +144,5 @@ export const setup = async (pool: Pool, notification: (n: NotificationData) => v
   }
 
   // Get initial values for all targeted resources see pollValues.ts
-  getValues(notification);
-};
-
-const startLongPoll = (notification: (n: NotificationData) => void) => {
-  // Start long polling in an async thread
-  setTimeout(() => longPoll(notification), 0);
-};
-
-const longPoll = async (notification: (n: NotificationData) => void) => {
-  /**
-   * Get notifications through long-polling channel
-   * GET /v2/notification/pull
-   */
-  let delay = 500;
-  const result = await fetch(longPollUrl, { headers })
-    .then(checkStatus)
-    .then(r => r.json())
-    .catch(e => {
-      // If errors start to occur, do another long poll but wait a few seconds to prevent rapid ramp-up if this is due to 409 conflicts
-      delay *= 10;
-    });
-  /**
-   * Do another long-poll.
-   * Long-polling requires the client code to actively request notifications.
-   * Empty responses occur if no event happens within 30 seconds.  Client code will need to handle 204 and request again.
-   */
-  setTimeout(() => longPoll(notification), delay);
-  // Handle responses
-  handleNotification(result, notification);
-};
-
-export const handleNotification = (result: NotificationResponse, notification: (n: NotificationData) => void) => {
-  if (!result) {
-    return;
-  }
-  const { notifications } = result;
-  const asyncResponses = result["async-responses"];
-  /**
-   * Events come through several categories.  Here the code looks for notifications and async-responses
-   * Notifications are for subscriptions and pre-subscriptions.
-   * Each notification will contain information about the device and resource path plus the event data in base64 encoded string
-   */
-  if (notifications) {
-    notifications.forEach(n =>
-      notification({ deviceId: n.ep, path: n.path, payload: Buffer.from(n.payload, "base64").toString() })
-    );
-  }
-  /**
-   * Async responses are for device-requests. One-off requests to the device resource for GET, PUT or POST.
-   * These responses match to async-id created by the client at the request time.
-   * The client will need to know the context of each async-request and match the device id and resource path.
-   */
-  if (asyncResponses) {
-    asyncResponses.forEach(n => {
-      const async = removeAsync(n.id) as AsyncRequest;
-      if (async) {
-        notification({
-          deviceId: async.deviceId,
-          path: async.path,
-          payload: Buffer.from(n.payload, "base64").toString(),
-        });
-      }
-    });
-  }
+  getValues();
 };

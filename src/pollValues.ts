@@ -1,7 +1,8 @@
 import fetch from "node-fetch";
-import { getQuery, storeAsync } from "../";
-import { DeviceResource, NotificationData, RegisteredDevicesResponse } from "./types";
-import { checkStatus, generateId, matchWithWildcard, resolveIn } from "./utils";
+import { generateId, storeAsync } from "./asyncResponses";
+import { getQuery } from "./dbActions";
+import { DeviceResource, RegisteredDevicesResponse } from "./types";
+import { checkStatus, matchWithWildcard, resolveIn } from "./utils";
 
 const resourcePaths = (process.env.RESOURCE || "/3303/*").split(",");
 const deviceId = (process.env.DEVICE_ID || "*").split(",");
@@ -22,7 +23,7 @@ const deviceRequestUrl = new URL("/v2/device-requests", apiUrl);
  * This routine calls each active device matching DEVICE and does a GET request on each matching RESOURCE
  * Wait five minutes and do it again
  */
-export const getValues = async (notify: (data: NotificationData) => void) => {
+export const getValues = async () => {
   console.log("Getting latest resource values");
   console.log("Getting registered devices");
   // GET /v3/devices?state__eq=registered
@@ -102,5 +103,5 @@ export const getValues = async (notify: (data: NotificationData) => void) => {
       }
     });
   console.log(`Resource values requested, going to sleep for ${POLLING_INTERVAL / (1000 * 60)} minute(s)`);
-  setTimeout(() => getValues(notify), POLLING_INTERVAL);
+  setTimeout(() => getValues(), POLLING_INTERVAL);
 };

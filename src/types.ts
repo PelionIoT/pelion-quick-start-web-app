@@ -29,12 +29,6 @@ export interface SubscriptionBody {
   "resource-path": string[];
 }
 
-export interface AsyncRequest {
-  deviceId: string;
-  path: string;
-  asyncId: string;
-}
-
 export interface Results {
   results: any[];
 }
