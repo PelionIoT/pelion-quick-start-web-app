@@ -9,8 +9,11 @@ const apiUrl = window.location.href;
 const PAUSE_FOR_POLL = 1000 * 5; // 5 seconds
 
 const resourceNames: Names = {
+  "/3200/.*/5501": "Counter",
   "/3303/.*/5700": "Temperature sensor",
   "/3304/.*/5700": "Relative humidity",
+  "/3305/.*/5800": "Power",
+  "/3306/.*/5700": "On/Off",
   "/3323/.*/5700": "Air pressure",
 };
 
