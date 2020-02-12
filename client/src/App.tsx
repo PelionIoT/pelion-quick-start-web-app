@@ -21,7 +21,14 @@ const App: React.FC = () => {
   const [values, setValues] = useState<ResourceValue[]>([]);
   const [deviceInfo, setDeviceInfo] = useState<DeviceInfo[]>([]);
   const [deviceNames, setDeviceNames] = useState<Names>({});
+  const [selectedDevice, setSelectedDevice] = useState<string>();
+  const [selectedResource, setSelectedResource] = useState<string>();
+  const [usePut, setUsePut] = useState(true);
+  const [sendingRequest, setSendingRequest] = useState(false);
+  const [payload, setPayload] = useState("");
+
   const devices: Devices = {};
+  const selectedDeviceInfo = deviceInfo.find(d => d.device_id === selectedDevice);
 
   const getValues = () => {
     superagent
@@ -132,12 +139,7 @@ const App: React.FC = () => {
       </ResponsiveContainer>
     );
   };
-  const [selectedDevice, setSelectedDevice] = useState<string>();
-  const selectedDeviceInfo = deviceInfo.find(d => d.device_id === selectedDevice);
-  const [selectedResource, setSelectedResource] = useState<string>();
-  const [usePut, setUsePut] = useState(true);
-  const [sendingRequest, setSendingRequest] = useState(false);
-  const [payload, setPayload] = useState("");
+
   return (
     <div className="App">
       <header className="App-header">
