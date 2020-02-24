@@ -145,7 +145,7 @@ const App: React.FC = () => {
       <header className="App-header">
         <button
           onClick={() => {
-            superagent.get(new URL("/reset-values", apiUrl).toString()).then(() => getValues());
+            if(window.confirm('Reset db values?')){superagent.get(new URL("/reset-values", apiUrl).toString()).then(() => getValues())};           
           }}
         >
           Reset db values
