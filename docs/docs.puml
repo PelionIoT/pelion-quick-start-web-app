@@ -13,6 +13,7 @@ pdm -right- disco
 @enduml
 
 @startuml app_setup
+hide footbox
 title App startup
 entity "Web App" as app
 database "PostGres" as db
@@ -41,6 +42,7 @@ deactivate api
 @enduml
 
 @startuml resource_notify
+hide footbox
 title Event notification
 entity "Web App" as app
 database "PostGres" as db
@@ -64,6 +66,7 @@ deactivate app
 @enduml
 
 @startuml view_data
+hide footbox
 title Visualise Data
 entity "App" as app
 database "PostGres" as db

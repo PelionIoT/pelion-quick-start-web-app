@@ -10,7 +10,7 @@ This app consists of:
 
 ## App startup
 
-At startup the app will initialise the db table and setup a [callback channel (webhook)](https://www.pelion.com/docs/device-management/current/integrate-web-app/event-notification.html) with Pelion Device management. The app will then send a request to initiate [subscriptions to device resources](https://www.pelion.com/docs/device-management/current/connecting/resource-change-webapp.html).
+At startup the app will initialise the db table and setup a [callback channel (webhook)](https://www.pelion.com/docs/device-management/current/integrate-web-app/event-notification.html) with Pelion Device management. The app will then send a request to initiate [subscriptions to device resources](https://www.pelion.com/docs/device-management/current/device-management/resource-change-webapp.html).
 
 ![](docs/app_setup.png)
 
