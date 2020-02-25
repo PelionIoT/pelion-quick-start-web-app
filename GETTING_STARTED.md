@@ -5,7 +5,7 @@
 You will need two pieces of information at a minimum to get this running correctly.
 
 - `APIKEY` - API Key from Pelion Device Management - https://portal.mbedcloud.com/
-- `APP_HOST` - URL of the application to be deployed - `https://<APP>.herokuapp.com/`
+- `APP_HOST` - URL of the application to be deployed - `https://<APP>.herokuapp.com/` - This will be determined during the creation of the app.
 
 ## Deploy from Github
 
@@ -18,7 +18,7 @@ Create an app in Heroku by cloning from an existing Git repository
 4. Confirm your email and set a password
 5. Welcome -> Click here to proceed
    - Continues create app flow
-   - Enter name for your app: `APP`
+   - Enter name for your app: `APP` <-- Save this information for `APP_HOST` later.
 
 Build process starts and app will deploy to `https://<APP>.herokuapp.com/`
 
