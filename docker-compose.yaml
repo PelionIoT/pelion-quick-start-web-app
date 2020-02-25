@@ -11,6 +11,7 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:example@db:5432/postgres
       API_KEY: ${API_KEY}
+      API_HOST: ${API_HOST}
       DEVICE_ID: ${DEVICE_ID}
       RESOURCE: ${RESOURCE}
       LONG_POLLING_ENABLED: ${LONG_POLLING_ENABLED}
@@ -18,3 +19,4 @@ services:
     image: postgres:alpine
     environment:
       POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example

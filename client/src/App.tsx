@@ -54,6 +54,7 @@ const App: React.FC = () => {
     if (result.body) {
       setDeviceInfo(
         result.body.results
+          .filter((a: any) => a.state == "registered")
           .map((a: any) => ({
             ...a,
             resources: JSON.parse(a.resources).sort((a: DeviceResource, b: DeviceResource) =>
@@ -145,7 +146,9 @@ const App: React.FC = () => {
       <header className="App-header">
         <button
           onClick={() => {
-            superagent.get(new URL("/reset-values", apiUrl).toString()).then(() => getValues());
+            if (window.confirm("Reset db values?")) {
+              superagent.get(new URL("/reset-values", apiUrl).toString()).then(() => getValues());
+            }
           }}
         >
           Reset db values

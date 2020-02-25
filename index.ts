@@ -37,6 +37,7 @@ const expressServer = express()
     }
   })
   .get("/reset-values", async (_, res) => {
+    console.log("Request to reset database values - GET /reset-values");
     try {
       res.send(await getQuery("truncate resource_values;"));
     } catch (err) {
@@ -45,7 +46,7 @@ const expressServer = express()
   })
   .get("/devices", async (_, res) => {
     try {
-      res.send(await getQuery("select * from devices where state='registered';"));
+      res.send(await getQuery("select * from devices;"));
     } catch (err) {
       res.send("Error" + err);
     }
