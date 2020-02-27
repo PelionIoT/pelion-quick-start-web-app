@@ -1,7 +1,6 @@
 # Moving from the Pelion Device Management SDKs to the APIs
 
-You can still find the Pelion Device Management SDKs as open-source code on Github, but Pelion will no longer actively maintain or update the Device Management SDKs, effective March 2020.
-<link>
+You can still find the Pelion Device Management SDKs as [open-source code on Github](), but Pelion will no longer actively maintain or update the Device Management SDKs, effective March 2020.
 
 ## What are the APIs?
 
@@ -14,14 +13,7 @@ The Device Management APIs provide access to all Device Management services and 
 * Combine data and device management with data from other services.
 * Interact directly with devices instead of through Device Management Portal.
 * Use Device Management without a graphical interface, for example, to automate routine operations.
-* Integrate with other third party systems such as CRM, Data analytics platforms, and other IT solutions.
-
-The REST APIs continue to be the most direct way to access the service, and continue to benefit from a focus on flexibility and usability. There are numerous benefits that REST APIs offer for developers:
-
-* Efficient performance. Direct access to the REST APIs ensures that it's always possible to get the best performance and most efficient use of resources.
-* Simplification in complex environments. By avoiding the abstractions necessary in the SDK layer, the REST APIs are guaranteed to provide consistent behavior in different environments.
-* Focus on maintenance. The REST APIs continue to evolve. Arm always makes sure that APIs are improved or replaced with suitable alternatives if deprecations are necessary. From the maintenance perspective it will be easier and straightforward for REST API users to replace old with the new one.
-* Reduced complexity. By using the REST APIs directly, there are no additional software and compiler layers where security vulnerabilities could be introduced. This provides the most robust way to adopt the industry’s most secure solution for IoT device management.
+* Integrate with other third party systems such as CRM, data analytics platforms, and other solutions.
 
 ## Do I need to change my integration?
 
@@ -31,24 +23,35 @@ If you haven't used an API before and want to know more about the concepts invol
 
 ## Example workflow
 
-These tutorials guide you through building and deploying a web application using Heroku, then using the APIs to connect your device to Device Management.
+After a brief introduction to the application architecture, these tutorials guide you through building and deploying a web application using Heroku, then using the APIs to connect your device to Device Management.
 
-### Build and deploy a web application using the APIs
+## Quick Start application architecture
 
+The main components of the example application are:
 
-### Connect a device to Device Management
+* An express.js web server running on Heroku. This works with other hosting services, but we've chosen Heroku because it's free.
+* A web application build using react.js, which is served to the user from the web server.
+* A Postgres database to store data values from subscriptions to Pelion REST APIs.
+* A Pelion Device Management account.
+* An IoT dev board (in the tutorial, a DISCO 475 board) connected to your account which generates resource value events.
 
-Follow the [Device Management Connect quick start](), and .
+<span class="notes">**Note:** This is an example only. Your own deployment and architecture may vary.</span>
 
-## Learning more about the APIs
+### Building and deploying a web application
 
-The public documentation for the REST APIs can be found here. In the following sections, you can get a quick introduction to using the Connect REST APIs by following the quick start web application tutorial. This is a great way to learn more about the REST APIs, and this should be your starting point for continuing development beyond your use of the SDKs.
+### Connect a device to Device Management through your web application
+
+Follow the [Device Management Connect quick start]().
 
 ## What to do next
 
 Now that you have completed the tutorial, there are a few steps that you might choose to take.
 
-#### Modify your example firmware
+### Learning more about the APIs
+
+The public documentation for the APIs can be found here. In the following sections, you can get a quick introduction to using the Connect REST APIs by following the [quick start web application tutorial]().
+
+### Modify your example firmware
 
 Depending on the hardware features enabled on your device, you may be able to implement additional functionality in your firmware.
 
@@ -56,9 +59,9 @@ To begin, consider the Basic Device Management Client example with Mbed OS which
 
 For example, you may be able to expose additional resource values, and then modify your web application parameters in order to observe those new resources and add them to the app database. The Pelion Device Management Client Lite documentation describes how to manage resources in more detail.
 
-#### Explore additional APIs
+### Explore additional APIs
 
-There are a number of different APIs which cover different aspects of device managementy:
+There are a number of different APIs which cover different aspects of device management:
 
 * Device Directory API: Stores device information and lets you manage devices.
 * Update Service API: Manages device firmware updates.
@@ -77,17 +80,15 @@ There are a number of different APIs which cover different aspects of device man
 <!-- Notes
 
 * Who's this for? This is mostly aimed toward web app developers.
-* Where will it go? Should go into the SDK intro area. Work into existing structure.
+* Where will it go? Should go into the SDK intro area. Work into existing structure. Tutorial most likely ends up in integrating web app chapter.
 * What will it tell me? How to make sense of the APIs when I've been working with the SDKs.
-* Why's this important? The SDKs aren't being maintained anymore.
+* Does it actually tell me that? Let's make sure. 
+* Why's this important? The SDKs aren't being maintained anymore. Your choices for DM are either Portal or the APIs.
 * What do I need to do with this information?
 * What's the next step?
 
-[Melinda W3]Let's be careful how simple we claim our APIs to be :)
 [Melinda W4]Let's make sure this is in sync with https://www.pelion.com/docs/device-management/current/service-api-references/index.html 
 [Melinda W5]For instance, this says CRUDL, whereas the docs say CRUD.
-[Melinda W6]Expand CRUDL before using the acronym.
-[Melinda W7]Nonparallel construction; the phrase 'easy to learn and use' is impossible to prove and interrupts the flow of the sentence.
 
 We might be able to assume some standard background from developers (though that's dangerous in itself), but we should avoid claiming something is 'easy'. Makes it all the more frustrating when something goes wrong.
 [Melinda W8]Full stop at the end of each entry in a bulleted list.
