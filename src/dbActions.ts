@@ -6,6 +6,7 @@ console.log(`DATABASE_URL=${process.env.DATABASE_URL}`);
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DB_USE_SSL !== "false" ? true : false,
 });
 
 /**
