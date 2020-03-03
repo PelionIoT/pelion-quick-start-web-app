@@ -10,11 +10,8 @@ services:
       - db
     environment:
       DATABASE_URL: postgres://postgres:example@db:5432/postgres
-      API_KEY: ${API_KEY}
-      API_HOST: ${API_HOST}
-      DEVICE_ID: ${DEVICE_ID}
-      RESOURCE: ${RESOURCE}
-      LONG_POLLING_ENABLED: ${LONG_POLLING_ENABLED}
+    env_file:
+      - docker.env
   db:
     image: postgres:alpine
     environment:

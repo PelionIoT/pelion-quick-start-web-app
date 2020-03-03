@@ -54,7 +54,7 @@ const App: React.FC = () => {
     if (result.body) {
       setDeviceInfo(
         result.body.results
-          .filter((a: any) => a.state == "registered")
+          .filter((a: any) => a.state === "registered")
           .map((a: any) => ({
             ...a,
             resources: JSON.parse(a.resources).sort((a: DeviceResource, b: DeviceResource) =>
