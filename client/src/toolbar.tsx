@@ -28,11 +28,13 @@ const Toolbar: React.FC<ToolbarProps> = ({ deviceInfo, getValues }) => {
       </button>
       <select value={selectedDevice} onChange={e => setSelectedDevice(e.target.value)}>
         <option />
-        {deviceInfo.map(d => (
-          <option key={d.id} value={d.device_id}>
-            {d.name || d.device_id}
-          </option>
-        ))}
+        {deviceInfo
+          .filter(a => a.state === "registered")
+          .map(d => (
+            <option key={d.id} value={d.device_id}>
+              {d.name || d.device_id}
+            </option>
+          ))}
       </select>
       <select value={selectedResource} onChange={e => setSelectedResource(e.target.value)}>
         <option />

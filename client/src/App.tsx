@@ -49,14 +49,13 @@ const App: React.FC = () => {
     if (result.body) {
       setDeviceInfo(
         result.body.results
-          .filter((a: any) => a.state === "registered")
           .map((a: any) => ({
             ...a,
             latest_update: new Date(a.latest_update),
             first_update: new Date(a.first_update),
-            resources: JSON.parse(a.resources).sort((a: DeviceResource, b: DeviceResource) =>
-              a.uri.localeCompare(b.uri)
-            ),
+            resources: JSON.parse(
+              a.resources === "" ? "[]" : a.resources
+            ).sort((a: DeviceResource, b: DeviceResource) => a.uri.localeCompare(b.uri)),
           }))
           .sort((a: DeviceInfo, b: DeviceInfo) => a.name.localeCompare(b.name))
       );
