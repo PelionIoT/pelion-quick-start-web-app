@@ -5,7 +5,7 @@ import DeviceList from "./deviceList";
 import ResourceGraphs from "./resourceGraphs";
 import Toolbar from "./toolbar";
 
-const apiUrl = window.location.href;
+export const apiUrl = window.location.href;
 
 const PAUSE_FOR_POLL = 1000 * 5; // 5 seconds
 
