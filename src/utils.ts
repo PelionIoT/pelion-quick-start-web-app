@@ -16,7 +16,8 @@ export const deviceId = (process.env.DEVICE_ID || "*").split(",");
 export const hostName = process.env.APP_HOST || "https://localhost";
 export const webhookURI = new URL("callback", hostName).toString();
 
-export const LONG_POLLING_ENABLED: boolean = process.env.LONG_POLLING_ENABLED === "true";
+export const STORE_DATA = process.env.STORE_DATA !== "false";
+export const LONG_POLLING_ENABLED = process.env.LONG_POLLING_ENABLED === "true";
 
 export const checkStatus = async (res: Response) => {
   if (res.ok) {

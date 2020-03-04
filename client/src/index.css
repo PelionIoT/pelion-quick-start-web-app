@@ -23,7 +23,7 @@ body {
   margin: 10px;
   padding: 10px;
   gap: 50px 50px;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   align-items: center;
   justify-content: center;
 }
@@ -41,4 +41,11 @@ h1,
 h2,
 h3 {
   color: #000;
+}
+
+table {
+  text-align: left;
+}
+td {
+  padding: 1px;
 }

@@ -16,6 +16,7 @@ import {
   subscriptionsUrl,
   webhookURI,
   webhookUrl,
+  longPollUrl,
 } from "./utils";
 
 console.log(`APP_HOST=${hostName}`);
@@ -51,6 +52,11 @@ export const setup = async () => {
         );
       `
     );
+    await getQuery(`ALTER TABLE if exists devices 
+      add column if not exists latest_value text,
+      add column if not exists latest_update timestamp,
+      add column if not exists first_update timestamp
+      `);
   } catch (err) {
     console.error(err);
   }
@@ -115,6 +121,16 @@ export const setup = async () => {
       .then(checkStatus)
       .catch(() => {});
     console.log("Deleted old webhook");
+
+    /**
+     * Remove old long poll notification channel if exists so we can use webhooks instead
+     * DELETE /v2/notification/callback
+     */
+    await fetch(longPollUrl, {
+      method: "DELETE",
+      headers,
+    }).then(() => {});
+    console.log("Deleted old long poll");
 
     // Notifications can come through long-polling (PULL) or via webhooks (PUSH)
     if (LONG_POLLING_ENABLED) {

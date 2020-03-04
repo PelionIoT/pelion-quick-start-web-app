@@ -35,6 +35,9 @@ export interface DeviceInfo {
   device_id: string;
   name: string;
   resources: DeviceResource[];
+  latest_update: Date;
+  first_update: Date;
+  latest_value: number;
 }
 
 ReactDOM.render(<App />, document.getElementById("root"));
