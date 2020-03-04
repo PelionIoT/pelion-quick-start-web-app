@@ -29,9 +29,9 @@ const DeviceList: React.FunctionComponent<DeviceListProps> = ({ deviceInfo }) =>
           const stillUp = moment.duration(moment().diff(last), "milliseconds");
           return (
             <tr key={d.id}>
-              <td>{d.name}</td>
-              <td>{first.fromNow()}</td>
-              <td>{last.fromNow()}</td>
+              <td title={d.device_id}>{d.name}</td>
+              <td title={first.format()}>{first.fromNow()}</td>
+              <td title={last.format()}>{last.fromNow()}</td>
               <td>{uptime.humanize()}</td>
               <td>{d.latest_value}</td>
               <td>{stillUp.asMinutes() >= 5 ? "👎" : "✅"}</td>
