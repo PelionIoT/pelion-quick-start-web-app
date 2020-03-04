@@ -52,6 +52,11 @@ export const setup = async () => {
         );
       `
     );
+    await getQuery(`ALTER TABLE if exists devices 
+      add column if not exists latest_value text,
+      add column if not exists latest_update timestamp,
+      add column if not exists first_update timestamp
+      `);
   } catch (err) {
     console.error(err);
   }
