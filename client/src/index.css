@@ -21,15 +21,20 @@ body {
 .App-article {
   max-width: 100%;
   min-height: 100px;
-  display: grid;
   margin: 10px;
   padding: 10px;
-  gap: 50px 50px;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   align-items: center;
   justify-content: center;
+  display: block;
 }
-
+.App-graph-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 50px 50px;
+}
+.device-list {
+  width: 100%;
+}
 .App-graph {
   display: grid;
   margin: 5px;
@@ -41,7 +46,12 @@ body {
 
 table {
   text-align: left;
+  width: 100%;
 }
 td {
   padding: 1px;
+}
+
+tr:nth-child(even) {
+  background-color: #273037;
 }
