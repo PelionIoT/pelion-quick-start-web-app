@@ -1,20 +1,22 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
-    "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: "Anonymous Pro", monospace;
 }
 
 .App {
   text-align: center;
 }
 body {
-  background-color: #fff;
+  background-color: #333e48;
+  color: #ffffff;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-size: 18px;
 }
 .App-article {
   max-width: 100%;
@@ -35,12 +37,6 @@ body {
   gap: 5px 5px;
   grid-template-columns: repeat(auto-fit, minmax(1fr, 0));
   grid-template-areas: "graph value";
-}
-
-h1,
-h2,
-h3 {
-  color: #000;
 }
 
 table {
