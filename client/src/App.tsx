@@ -86,8 +86,11 @@ const App: React.FC = () => {
       </header>
       <article className="App-article">
         <DeviceList deviceInfo={deviceInfo} />
-        {values.length === 0 && deviceInfo.length === 0 && <h1 className="noData">No data available</h1>}
-        <ResourceGraphs devices={devices} resourceNames={resourceNames} deviceNames={deviceNames} />
+        <hr /> <br />
+        <div className="App-graph-grid">
+          {values.length === 0 && deviceInfo.length === 0 && <h1 className="noData">No data available</h1>}
+          <ResourceGraphs devices={devices} resourceNames={resourceNames} deviceNames={deviceNames} />
+        </div>
       </article>
     </div>
   );
