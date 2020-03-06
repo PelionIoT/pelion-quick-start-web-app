@@ -3,6 +3,12 @@ import React from "react";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Devices, Names, Paths, ResourceValue } from ".";
 
+const TOPAZ = "#00C1DE";
+const OPAL = "#FFFFFF";
+const PERIDOT = "#95d600";
+const AMBER = "#ff6b00";
+const ONYX = "#273037";
+
 interface ToolbarProps {
   devices: Devices;
   resourceNames: Names;
@@ -22,7 +28,7 @@ const ResourceGraphs: React.FC<ToolbarProps> = ({ devices, deviceNames, resource
         const resourceName = matchPath && resourceNames[matchPath] ? resourceNames[matchPath] : res;
         const [val1, val2] = paths[res];
         const styleColour =
-          val1 && val2 && val1.value !== val2.value ? (val1.value > val2.value ? "green" : "red") : "black";
+          val1 && val2 && val1.value !== val2.value ? (val1.value > val2.value ? PERIDOT : AMBER) : OPAL;
         return (
           <div className="device" key={res}>
             <h3 title={deviceId}>
@@ -47,16 +53,17 @@ const ResourceGraphs: React.FC<ToolbarProps> = ({ devices, deviceNames, resource
     return (
       <ResponsiveContainer aspect={16 / 9} minHeight={150}>
         <LineChart data={values}>
-          <Line dot={false} type="monotone" dataKey="value" animationEasing="linear" />
+          <Line dot={false} type="monotone" dataKey="value" animationEasing="linear" stroke={TOPAZ} strokeWidth="3px" />
           <XAxis
             scale="time"
             dataKey="epoch"
             type="number"
+            stroke={OPAL}
             domain={["auto", "auto"]}
             tickFormatter={d => moment(d).format("LT")}
           />
-          <YAxis domain={[Math.floor(min - margin), Math.ceil(max + margin)]} />
-          <Tooltip labelFormatter={d => moment(d).format("ll LTS")} />
+          <YAxis stroke={OPAL} domain={[Math.floor(min - margin), Math.ceil(max + margin)]} />
+          <Tooltip labelFormatter={d => moment(d).format("ll LTS")} contentStyle={{ backgroundColor: ONYX }} />
         </LineChart>
       </ResponsiveContainer>
     );
